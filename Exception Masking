@@ -1,0 +1,16 @@
+// The following piece of code does the following
+// Illegal access to a restricted address is attempted (0x00000000) which is reserved for MSP
+// Faultmask register is configured to supress the exception
+// The hard fault exception occurs which gets supressed
+
+#include "stm32f4xx.h"
+int main(void)
+{
+		void (*jump_address) (void);
+		jump_address=0x00000000;            // Illegal to navigate to the address as it is reserved for MSP
+	  __set_FAULTMASK(1);                 // FAULTMASK is 1 bit wide-- the setter function is present in the cmsis_armcc.h
+		jump_address();
+	  __get_FAULTMASK();
+		return 0;
+}
+
