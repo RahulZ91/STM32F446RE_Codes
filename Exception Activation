@@ -1,0 +1,22 @@
+// The code explores a common error division by zero
+#include "stm32f4xx.h"
+int divide_num(int x,int y)
+{
+	return x/y;
+}
+int main(void)
+{
+		SCB_Type *pSCB=SCB;                  // Pointer of type SCB_Type which is the name of the strcture for SCB 
+																				 // pointer pSCB points to the base address of SCB
+		pSCB ->SHCSR=pSCB ->SHCSR |( 1<<16);// Notation used to dereference the pointer pSCB and access the SHSCR register
+		pSCB ->SHCSR=pSCB ->SHCSR |( 1<<16);// Set the 16,17 and 18th bit to 1 by or ops with 1 shifted to 16,17 and 18(memmanage,busfault and usagefault exceptions enabled)
+		pSCB ->SHCSR=pSCB ->SHCSR |( 1<<16);// SHSCR is used to enable Exceptions by bit manipulation of the SHSCR register
+		
+	// enable the 4th bit in CCR for returning an exception on divide by zero
+		pSCB ->CCR=pSCB ->CCR|(1<<4);
+		// Divide by zero
+		divide_num(2,0);
+	  
+    return 0;
+}
+
