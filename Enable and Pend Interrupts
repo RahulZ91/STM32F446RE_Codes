@@ -13,10 +13,10 @@ int main(void)
 {
 	// Enable the IRQ for USART 3
 	NVIC_Type *pNVIC=NVIC;
-	NVIC->ISER[1] |=(1<< 7);
-	
+	NVIC->ISER[1] |=(1<< 7);  // Set the 7th bit in ISER[1] to enable IRQ 39 overall; since one ISER has max 32 bits
+			          // ISER[1] has IRQ from 32-63 to be enabled
 	// Pend the interrupt 
-	pNVIC->ISPR[1]|=(1<<7);
+	pNVIC->ISPR[1]|=(1<<7);   // Similar logic as above
 	
 		return 0;
 }
