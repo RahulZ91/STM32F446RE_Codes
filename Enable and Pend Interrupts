@@ -1,0 +1,23 @@
+// COde to manipulate the registers for enabling and pending an interrupt
+// USART3 peripheral is used here
+
+/* Enable and pend USART 3 peripheral */
+#include "stm32f4xx.h"
+#include "core_cm4.h"
+#define USART3_IRQ 39
+void USART3_IRQHandler() // defintion can be overwritten by the user ; since it is a weak function
+{
+	while(1); 						// puts the processor into an infinite loop
+}
+int main(void)
+{
+	// Enable the IRQ for USART 3
+	NVIC_Type *pNVIC=NVIC;
+	NVIC->ISER[1] |=(1<< 7);
+	
+	// Pend the interrupt 
+	pNVIC->ISPR[1]|=(1<<7);
+	
+		return 0;
+}
+
