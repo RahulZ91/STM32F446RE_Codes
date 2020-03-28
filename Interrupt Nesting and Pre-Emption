@@ -1,0 +1,40 @@
+// Enable and pend three different interrupt. change the interrupt priorities
+// Pre-emption and nesting supported by Cortex M4
+
+#include "stm32f4xx.h"
+#include "core_cm4.h"
+
+void WWDG_IRQHandler(void)
+{
+	NVIC_SetPendingIRQ(USART3_IRQn);
+	while(1);
+}
+
+void USART3_IRQHandler(void)
+{
+	NVIC_SetPendingIRQ(SPI1_IRQn);
+	while(1);
+}
+
+void SPI1_IRQHandler(void)
+{
+	
+}
+
+int main(void)
+{
+	// Enable and pend Watchdog and USART3 IRQ
+	NVIC_EnableIRQ(WWDG_IRQn);
+	NVIC_EnableIRQ(USART3_IRQn);
+	NVIC_EnableIRQ(SPI1_IRQn);
+	
+	// Change the priority
+	NVIC_SetPriority(WWDG_IRQn,4); // NVIC_SetPriorty
+	NVIC_SetPriority(USART3_IRQn,2);
+	NVIC_SetPriority(SPI1_IRQn,1);
+	
+	// Pend the IRQ
+	NVIC_SetPendingIRQ(WWDG_IRQn);  // IRQ handler for Watchdog is executed and since the program is stuck in the infinte loop; IRQ handler for USART3 is not executed
+	
+	return 0;
+}
