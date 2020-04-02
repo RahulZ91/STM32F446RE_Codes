@@ -1,0 +1,23 @@
+// In this experiment; the contents from a RAM location are read; if the content is non- zero ; the control goes out of the loop
+// The code has been optimised to code level 3
+
+#include "stm32f4xx.h"
+
+#include<stdint.h>
+
+#define SRAM_address 0x20000008U
+
+int main(void)
+{
+	uint32_t value=0;
+	// Declare and initiliase a pointer that stores the address defined by the macro
+	uint32_t volatile *p;									// pointer initialised
+	p=(uint32_t *)SRAM_address;  // p points to the address as defined by macro SRAM_address
+	while(1)
+	{
+		value=*p;					// value contains the contents of address pointed to by pointer p 
+		if(value) break;  // if value contains non-zero value then move out the while loop
+	}
+	while(1);
+	return 0;
+}
