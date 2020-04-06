@@ -1,0 +1,40 @@
+#include "stm32f4xx.h"
+#include<stdint.h>
+
+#define RCC_Base_Addr 			0x40023800UL
+#define RCC_Cfg_Offset  		0x08
+#define RCC_Cfg_Addr				(RCC_Base_Addr + RCC_Cfg_Offset)
+#define RCC_AHB1_ENR_Offset  0x30UL
+#define RCC_AHB1_ENR_Addr 	(RCC_Base_Addr + RCC_AHB1_ENR_Offset)
+#define GPIOA_BASE_ADDR      0x40020000UL
+
+
+int main(void)
+{
+	// Pointer to hold the address for RCC Configuration Register
+	uint32_t *pRCC_Cfg=(uint32_t *)RCC_Cfg_Addr;
+	
+	// Set the 22 and 21 bit to 00 for MCO for HSI(informaton obtained from the reference manual)
+	*pRCC_Cfg |=(0<<21);
+	*pRCC_Cfg |=(0<<22);
+	
+	// Configure the prescalar
+	*pRCC_Cfg |=(0<<25);
+	*pRCC_Cfg |=(0<<26);
+	
+	// Enable the peripheral clock for GPIOA since PA8 has MCO1 as Alternate function(RCC AHB1 peripheral clock enable register )
+	uint32_t *pRCC_ENR=(uint32_t *)RCC_AHB1_ENR_Addr;
+	*pRCC_ENR |=(1<<0);  // Set the 0th bit i.e GPIO and portA peripheral clock bit
+	
+	// Configure the alternate function mode for GPIO PA pin 8 (GPIO_PortMode register)
+	uint32_t *pGPIOAModeReg = (uint32_t*)(GPIOA_BASE_ADDR + 00); // setting the values in the GPIO_PortMode register to enable alternate function mode
+	*pGPIOAModeReg &= ~( 0x3 << 16); //clear // the 16th and the 17th bit are to be cleared
+	*pGPIOAModeReg |= ( 0x2 << 16);  //set the 16th and the 17th bit to 10 for alternate function mode for pin 8 in
+	
+	// Confgure the AFRH(offset is 0x24H) to AF0 for pin 8
+	uint32_t *pGPIOAAltFunHighReg = (uint32_t*)(GPIOA_BASE_ADDR + 0x24);
+	*pGPIOAAltFunHighReg &= ~( 0xf << 0); // set the 0,1,2,3 bit to 0 for AF0 in the 8th pin in AFRH
+	
+	while(1);
+	return 0;
+}
