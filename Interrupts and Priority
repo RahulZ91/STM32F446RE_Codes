@@ -1,0 +1,57 @@
+#include<stdint.h>
+#include<stdio.h>
+
+#define TIM2_IRQ_NO					28
+#define I2C1_IRQ_NO					31
+
+// macros for defining the base address and the offsets
+uint32_t *NVIC_ISER0_ADDR	=(uint32_t *)0xE000E100;
+uint32_t *NVIC_ISPR0_ADDR	=(uint32_t *)0XE000E200;
+uint32_t *NVIC_IPR0_ADDR = (uint32_t *)0xE000E400;
+
+void config_priority(uint8_t IRQ_no,uint8_t priority_value)
+{
+	// find out the IPR
+	uint8_t iprx=IRQ_no /4;
+	uint32_t *ipr=(NVIC_ISPR0_ADDR+iprx); // ipr points to the address of the IPR
+	
+	// set the bit in IPR
+	uint8_t pos=(IRQ_no % 4)*8;
+	
+	// Clear the ipr register and set the values
+	*ipr &= ~(0xFF << pos);
+	*ipr |=(priority_value << pos);
+}
+
+int main(void)
+{
+	// configure the priority
+			config_priority(TIM2_IRQ_NO,0x80);
+			config_priority(I2C1_IRQ_NO,0x70);
+	
+	// pend the interrupt
+			*NVIC_ISPR0_ADDR |=(1U<<TIM2_IRQ_NO); // 1u results in unsigned shift and hence no change in sign
+	   /*uint32_t *pTIM2=NVIC_ISPR0_ADDR;
+			*pTIM2=(1<<TIM2_IRQ_NO);
+		 uint32_t *pI2C1=NVIC_ISPR0_ADDR;
+			*pI2C1=(1<<I2C1_IRQ_NO); */					
+	
+	//enable the interrupt
+	  *NVIC_ISER0_ADDR |=(1U<<I2C1_IRQ_NO);
+		*NVIC_ISER0_ADDR |=(1U<<TIM2_IRQ_NO);
+		 /*uint32_t *pI2C=NVIC_ISER0_ADDR;
+			*pI2C=(1<<I2C1_IRQ_NO);*/
+	
+	return 0;
+}
+void TIM2_IRQHandler(void)
+{
+	printf("[TIM2_IRQHandler]\n");
+	*NVIC_ISPR0_ADDR |=(1U<<I2C1_IRQ_NO);
+	while(1);
+}
+void I2C1_EV_IRQHandler(void)
+{
+	printf("I2C1_EV_IRQHandler\n");
+	
+}
