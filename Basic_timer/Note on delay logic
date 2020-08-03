@@ -9,3 +9,14 @@
  
  Note: Prescalar value : always insert one less than the pre-scalar in the STM32Cube MX
        
+
+Checklist in creating a delay program:
+
+1. msp.c
+       a) Enable TIMx clock
+       b) Enable the IRQ for the TIMx
+       
+ 2. main.c
+       a) Prototype for the callback (in case of interrupts) - check reason for callback and implement the correct one
+       b) callback function definition
+       c) HAL_TIM_BASE_START(&htimx) 
