@@ -1,0 +1,11 @@
+// How to create the delay
+
+1. The TIMxCLK frequency is required -> we can check the clock configuration in STM32Cube MX and the required Timer clock
+2. Decide the required pre-scalar. A pre-scalar is a factor that divides the Timer clock(basically slows it down)
+    e.g. if TIMxCLK is 50 MHz, then a PSC value of 50k divides the clock frequency 50000 times and we get the CNT_CLK as 1KHz
+3. Find the time period of the CNT_CLK i.e. 1/CNT_CLK
+    for above that is 1ms since CNT_CLK was 1KHz
+   This is the period that makes one increment in the Counter. A max of 65536 * 1ms is possible(using a 16 bit ARR)
+ 
+ Note: Prescalar value : always insert one less than the pre-scalar in the STM32Cube MX
+       
