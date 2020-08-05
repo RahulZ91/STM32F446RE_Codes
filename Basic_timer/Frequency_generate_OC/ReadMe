@@ -16,3 +16,10 @@
            - compare the value __HAL_SET_COMPARE API was used - check and increment here in the API
            
 5. use HAL_TIM_OC_START_IT API in the main.c to start the wave generation
+
+
+Files:
+
+msp.c - contains the OC_MspInit() - has the code for Alternate function of the Pin and the NVIC settings for the TIM2_IRQ(enable the IRQ and set the priority using HAL APIs)
+it.c - IRQ handler for TIM2 and Systik Handler
+main.c - HAL_Init(), GPIO_Init(), GPIO_Init(),USART_Init() and HAL_TIM_OC_START_IT API
