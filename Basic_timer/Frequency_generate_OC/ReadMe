@@ -1,0 +1,18 @@
+// How to create a 1 Hz square wave using OC mode in Timer 2
+
+1. Initialise the TIM_Handle_TypeDef structure
+    - set the PSC, ARR(Period)
+2. Initialise the OC_InitTypeDef structure
+    - OC Mode: Toggle
+    - Pulse width: (I used a 16 MHz system clock and a PSC of 15 to get a 1 MHz counter clock (CNT_CLK)) : Pulse_value=CNT_CLK/Toggle frequency
+        - the Toggle frequecy is double the desired frequency for a square wave 
+    - Polarity : HIGH
+    
+ 3. Configured the GPIOA Pin5 in the Alternate function mode for TIM2 CH1 
+ 4. Used the DelayElapsed Callback for the interrupt
+    DelayElapsed Callback
+        - check if the active channel is channel 1(if used channel 1 as the channel for the wave - we have 4 channels available -all can used at the same time but with different GPIO pins in ALt function mode)
+           - read the captured value
+           - compare the value __HAL_SET_COMPARE API was used - check and increment here in the API
+           
+5. use HAL_TIM_OC_START_IT API in the main.c to start the wave generation
